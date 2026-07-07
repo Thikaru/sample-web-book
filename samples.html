@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>見本一覧 — Web Stack Lab</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-logo" href="index.html">🧪 Web Stack Lab</a>
+    <nav class="site-nav">
+      <a href="index.html">トップ</a>
+      <a href="today.html">本日の見本</a>
+      <a href="samples.html" class="is-current">見本一覧</a>
+      <a href="playground.html">遊び場</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1 class="page-title">📚 今までの見本一覧</h1>
+    <p class="page-lead">これまでに学んだWebの技たち。カードをクリックすると詳細ページへ。</p>
+
+    <div class="filter-bar" id="categoryBar">
+      <span class="filter-label">カテゴリ:</span>
+      <button class="filter-btn is-active" data-filter="all">すべて</button>
+      <button class="filter-btn" data-filter="HTML">HTML</button>
+      <button class="filter-btn" data-filter="CSS">CSS</button>
+      <button class="filter-btn" data-filter="JS">JS</button>
+      <button class="filter-btn" data-filter="learned">✔ 学んだもの</button>
+    </div>
+    <div class="filter-bar" id="levelBar">
+      <span class="filter-label">レベル:</span>
+      <button class="filter-btn is-active" data-filter="all">すべて</button>
+      <button class="filter-btn" data-filter="基礎">🌱 基礎</button>
+      <button class="filter-btn" data-filter="応用">🚀 応用</button>
+      <button class="filter-btn" data-filter="modern">✨ 最新技術</button>
+    </div>
+
+    <p class="result-count" id="resultCount"></p>
+    <div class="card-grid" id="cardGrid"></div>
+  </main>
+
+  <footer class="site-footer">
+    見本は少しずつ増えていきます。お楽しみに!
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script>
+    const grid = document.getElementById("cardGrid");
+    const countEl = document.getElementById("resultCount");
+    const learnedIds = getLearnedIds();
+
+    // カテゴリとレベル、2つのフィルタを組み合わせる
+    const state = { category: "all", level: "all" };
+
+    function renderCards() {
+      // 新しい順に並べる
+      const list = [...SAMPLES]
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .filter((s) => {
+          if (state.category === "learned") {
+            if (!learnedIds.includes(s.id)) return false;
+          } else if (state.category !== "all" && s.category !== state.category) {
+            return false;
+          }
+          if (state.level === "modern") return !!s.modern;
+          if (state.level !== "all" && s.level !== state.level) return false;
+          return true;
+        });
+
+      countEl.textContent = `${list.length} 個の見本が見つかりました`;
+
+      if (list.length === 0) {
+        grid.innerHTML = `<p style="color: var(--text-dim);">該当する見本はまだありません。</p>`;
+        return;
+      }
+
+      grid.innerHTML = list
+        .map(
+          (s) => `
+        <a class="sample-card" href="sample.html?id=${s.id}">
+          <div class="card-meta">
+            <span class="badge badge-${s.category}">${s.category}</span>
+            <span class="badge ${levelBadgeClass(s.level)}">${s.level === "応用" ? "🚀 応用" : "🌱 基礎"}</span>
+            ${s.modern ? '<span class="badge badge-new">✨ 最新</span>' : ""}
+            ${learnedIds.includes(s.id) ? '<span class="badge badge-learned">✔ 学んだ</span>' : ""}
+          </div>
+          <h2>${s.title}</h2>
+          <p>${s.summary}</p>
+          <span class="card-date">${s.date} 追加</span>
+        </a>`
+        )
+        .join("");
+    }
+
+    // フィルタボタン(カテゴリ列・レベル列で独立に選択)
+    function setupBar(barId, key) {
+      const bar = document.getElementById(barId);
+      bar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".filter-btn");
+        if (!btn) return;
+        bar.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        state[key] = btn.dataset.filter;
+        renderCards();
+      });
+    }
+
+    setupBar("categoryBar", "category");
+    setupBar("levelBar", "level");
+    renderCards();
+  </script>
+</body>
+</html>

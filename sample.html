@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>見本詳細 — Web Stack Lab</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-logo" href="index.html">🧪 Web Stack Lab</a>
+    <nav class="site-nav">
+      <a href="index.html">トップ</a>
+      <a href="today.html">本日の見本</a>
+      <a href="samples.html" class="is-current">見本一覧</a>
+      <a href="playground.html">遊び場</a>
+    </nav>
+  </header>
+
+  <main class="page page-wide">
+    <p style="margin: 0 0 16px;">
+      <a href="samples.html" style="color: var(--text-dim); text-decoration: none; font-size: 14px;">← 見本一覧へ戻る</a>
+    </p>
+
+    <div class="sample-head" id="sampleHead"></div>
+    <p class="sample-description" id="sampleDescription"></p>
+    <ul class="sample-points" id="samplePoints"></ul>
+
+    <p style="margin: 0 0 20px;">
+      <button class="learned-btn" id="learnedBtn"></button>
+    </p>
+
+    <div id="editor"></div>
+  </main>
+
+  <footer class="site-footer">
+    気になるところを書き換えて、動きの変化を確かめてみよう。
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/sample-page.js"></script>
+  <script>
+    // URLの ?id=xxx から表示する見本を決める
+    const id = new URLSearchParams(location.search).get("id");
+    renderSamplePage(findSample(id));
+  </script>
+</body>
+</html>

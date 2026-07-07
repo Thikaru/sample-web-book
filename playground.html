@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>遊び場 — Web Stack Lab</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-logo" href="index.html">🧪 Web Stack Lab</a>
+    <nav class="site-nav">
+      <a href="index.html">トップ</a>
+      <a href="today.html">本日の見本</a>
+      <a href="samples.html">見本一覧</a>
+      <a href="playground.html" class="is-current">遊び場</a>
+    </nav>
+  </header>
+
+  <main class="page page-wide">
+    <h1 class="page-title">🎡 遊び場</h1>
+    <p class="page-lead">
+      今までの見本を組み合わせて、自分だけの作品を作ろう。コードは自動保存されるので、いつでも続きから遊べます。
+    </p>
+
+    <div class="playground-controls">
+      <label for="sampleSelect">見本を取り込む:</label>
+      <select id="sampleSelect"></select>
+      <button class="control-btn" id="appendBtn" title="今のコードの末尾に見本のコードを追加します">➕ コードに追加</button>
+      <button class="control-btn" id="replaceBtn" title="今のコードを消して見本のコードに置き換えます">↔ 置き換え</button>
+      <span class="spacer"></span>
+      <span class="save-status" id="saveStatus"></span>
+      <button class="control-btn is-danger" id="clearBtn">🗑 まっさらにする</button>
+    </div>
+
+    <div id="editor"></div>
+  </main>
+
+  <footer class="site-footer">
+    組み合わせて、壊して、直して。それが一番の練習です。
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/editor.js"></script>
+  <script>
+    const STORAGE_KEY = "sws-playground";
+
+    const DEFAULT_CODE = {
+      html: `<h1>ようこそ、遊び場へ!</h1>
+<p>ここは自由に実験できる場所。上のメニューから見本のコードを取り込んで、組み合わせてみよう。</p>`,
+      css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}`,
+      js: ``,
+    };
+
+    // 前回のコードがあれば復元する
+    let saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    } catch {}
+
+    const saveStatus = document.getElementById("saveStatus");
+    let saveTimer = null;
+
+    const editor = createEditor(
+      document.getElementById("editor"),
+      saved || DEFAULT_CODE,
+      {
+        onChange(code) {
+          // 書き換えのたびに自動保存
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(code));
+          saveStatus.textContent = "💾 保存しました";
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => (saveStatus.textContent = ""), 1500);
+        },
+      }
+    );
+
+    // 見本のセレクトボックスを作る(新しい順)
+    const select = document.getElementById("sampleSelect");
+    select.innerHTML = [...SAMPLES]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .map((s) => `<option value="${s.id}">[${s.category}] ${s.title}</option>`)
+      .join("");
+
+    document.getElementById("appendBtn").addEventListener("click", () => {
+      const s = findSample(select.value);
+      if (!s) return;
+      editor.appendCode({ html: s.html, css: s.css, js: s.js });
+    });
+
+    document.getElementById("replaceBtn").addEventListener("click", () => {
+      const s = findSample(select.value);
+      if (!s) return;
+      if (!confirm(`今のコードを「${s.title}」のコードに置き換えます。よろしいですか?`)) return;
+      editor.setCode({ html: s.html, css: s.css, js: s.js });
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      if (!confirm("コードをすべて消して、まっさらな状態に戻します。よろしいですか?")) return;
+      editor.setCode({ html: "", css: "", js: "" });
+    });
+  </script>
+</body>
+</html>

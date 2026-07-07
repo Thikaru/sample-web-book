@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Stack Lab — 毎日ひとつ、Webの技を。</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-logo" href="index.html">🧪 Web Stack Lab</a>
+    <nav class="site-nav">
+      <a href="index.html" class="is-current">トップ</a>
+      <a href="today.html">本日の見本</a>
+      <a href="samples.html">見本一覧</a>
+      <a href="playground.html">遊び場</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <span class="deco deco-1">✨</span>
+    <span class="deco deco-2">🎀</span>
+    <span class="deco deco-3">🍓</span>
+    <span class="deco deco-4">💫</span>
+
+    <h1>毎日ひとつ、<br><span class="gradient-text">Webの技</span>を身につける。</h1>
+    <p>
+      HTML・CSS・JavaScriptの基礎から最新技術までを「説明 × 動く見本 × 書き換えられるエディタ」で学べる、育てていく見本集。
+      コードをいじると、その場でプレビューが変わります。
+    </p>
+    <div class="hero-buttons">
+      <a class="btn btn-primary" href="today.html">✨ 本日の見本を見る</a>
+      <a class="btn btn-secondary" href="samples.html">📚 今までの見本一覧</a>
+    </div>
+  </section>
+
+  <main class="page">
+    <h2 class="page-title" style="text-align:center;">このサイトでできること</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">📖</div>
+        <h3>技術の説明を読む</h3>
+        <p>それぞれの見本に「どんな技術か」「なにがポイントか」の解説つき。まず読んで、仕組みを理解できます。</p>
+      </div>
+      <div class="feature">
+        <div class="icon">👀</div>
+        <h3>動く見本を見る</h3>
+        <p>説明だけでは分からない「実際の動き」をその場で確認。見て、触って、体で覚えられます。</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⌨️</div>
+        <h3>コードを書き換える</h3>
+        <p>HTML / CSS / JS のタブ付きエディタを搭載。数字や色を変えると、プレビューが即座に反応します。</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🎡</div>
+        <h3>遊び場で組み合わせる</h3>
+        <p>学んだ見本のコードを取り込んで、自分だけの作品づくり。組み合わせてこそ、本当の理解に。</p>
+      </div>
+    </div>
+
+    <div class="progress-box">
+      <h2>🏆 学習のあゆみ</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <p class="progress-text" id="progressText"></p>
+    </div>
+
+    <div class="progress-box" style="margin-top: 20px;">
+      <h2>🌱 このサイトは育ちます</h2>
+      <p class="progress-text">
+        このページは最初から完璧ではありません。新しい技術を学ぶたびに見本が増え、<br>
+        学んだ技術がこのサイト自身にも使われていく——そんな「育つ見本集」です。
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Web Stack Lab — 学んだ技術で、このサイト自身を育てていこう。
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script>
+    // 学習進捗を表示する
+    const learned = getLearnedIds().filter((id) => findSample(id));
+    const total = SAMPLES.length;
+    const percent = total ? Math.round((learned.length / total) * 100) : 0;
+
+    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressText").textContent =
+      learned.length === 0
+        ? `見本は現在 ${total} 個。「学んだ!」ボタンを押すと、ここに進捗が記録されます。`
+        : `${total} 個の見本のうち ${learned.length} 個を学びました (${percent}%)。この調子!`;
+  </script>
+</body>
+</html>
