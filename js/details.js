@@ -438,4 +438,56 @@ const SAMPLE_DETAILS = {
 </ul>
 <h4>アクセシビリティの配慮</h4>
 <p>読み上げソフトには1文字ずつの変化がノイズになるため、完成形のテキストを <code>aria-label</code> で持たせ、アニメ部分は <code>aria-hidden="true"</code> にするのが丁寧です。prefers-reduced-motion では最初から全文表示にする配慮も。</p>`,
+
+  "js-fetch-api": `
+<h4>「404はエラーじゃない」問題</h4>
+<p>fetchのcatchに来るのは「通信自体の失敗」(オフライン、DNS不明など)だけ。サーバーが404や500を返しても<strong>通信は成功扱い</strong>でcatchに来ません。だから <code>res.ok</code>(ステータスが200番台か)の確認が必須——fetch最大の初見殺しです。</p>
+<h4>async/awaitは.then()の読みやすい版</h4>
+<p><code>fetch(url).then(res =&gt; res.json()).then(data =&gt; ...)</code> と同じ意味を、上から下に読める形にしたのが async/await です。awaitの間、他の処理は止まりません(非同期)。「awaitは"結果が届くまでこの関数だけ待つ"」と理解しましょう。</p>
+<h4>CORSという門番</h4>
+<p>ブラウザのfetchは、相手サーバーが「他所からのアクセス歓迎」(Access-Control-Allow-Originヘッダー)を表明していないとJSに結果を渡しません。この見本のrandomfox.caは歓迎表明済みのAPI。自分のAPIを作るときは、このヘッダーをサーバー側で設定する必要があります。</p>
+<h4>実務での定番追加要素</h4>
+<ul>
+<li>POST送信: <code>fetch(url, { method: "POST", body: JSON.stringify(データ) })</code></li>
+<li>連打防止: 通信中はボタンをdisabledに(この見本でも実施)</li>
+<li>タイムアウト: <code>AbortSignal.timeout(5000)</code> を signal に渡す</li>
+</ul>`,
+
+  "js-web-animations": `
+<h4>CSSアニメとWAAPIの使い分け</h4>
+<p>「常に同じ動きの装飾」はCSSで十分。「ユーザー操作で止める/巻き戻す」「動く距離が実行時に決まる」「終わった瞬間に次の処理をしたい」ならWAAPIです。書式はCSSの@keyframesとほぼ1対1なので、翻訳感覚で行き来できます。</p>
+<h4>Animationオブジェクトの操縦メニュー</h4>
+<ul>
+<li><code>pause() / play() / cancel() / finish()</code> — 再生制御</li>
+<li><code>reverse()</code> — その場で進行方向を反転(playbackRateの符号反転)</li>
+<li><code>currentTime</code> — 再生位置をミリ秒で読み書き(スライダー連動も可能)</li>
+<li><code>anim.finished.then(...)</code> — 終了をPromiseで待てる(連続アニメが書きやすい!)</li>
+</ul>
+<h4>終わった姿を残すには</h4>
+<p>アニメ終了後、要素は元のスタイルに戻ります。最後の状態を残すには <code>fill: "forwards"</code> を指定。ただしfillはスタイル計算を占有し続けるため、確定させたいなら <code>anim.commitStyles()</code> で実スタイルに書き込んで <code>anim.cancel()</code> するのが行儀の良い作法とされています。</p>`,
+
+  "js-localstorage-memo": `
+<h4>localStorageの性格を知る</h4>
+<p>保存容量は約5MB、同期処理(呼んだ瞬間に完了)、そして<strong>オリジン(ドメイン)ごと</strong>に分離されます。有効期限はなく、ユーザーが消すかコードで消すまで残ります。一時的でよければ、タブを閉じると消える <code>sessionStorage</code> という兄弟も。</p>
+<h4>JSONで往復するときの注意</h4>
+<ul>
+<li><code>JSON.parse</code> は壊れた文字列で例外を投げる → try/catchか初期値の用意を</li>
+<li>DateやMap、関数はJSONにできない(文字列化で消える/化ける)</li>
+<li>プライベートブラウズ等で書き込みが例外になる環境もある</li>
+</ul>
+<h4>どの保存手段を選ぶ?</h4>
+<p>「設定・下書き・進捗」のような小さなデータはlocalStorage、サーバーに送る認証情報はCookie(HttpOnly)、大量・複雑なデータ(画像やDB的な検索)はIndexedDBが適所。localStorageに個人情報や認証トークンを置くのは、XSSで盗まれ得るため避けるのが原則です。</p>`,
+
+  "js-canvas-draw": `
+<h4>canvasとSVGの使い分け</h4>
+<p>canvasは「描いたら終わりのビットマップ」——ピクセルを直接塗るので、大量の描画(パーティクル、ゲーム)に強い。SVGは「図形が要素として残るベクター」——後から個別に選択・変形・アニメでき、拡大しても粗れません。お絵かき・ゲームはcanvas、アイコン・図表はSVGが基本線です。</p>
+<h4>ぼやけ対策(devicePixelRatio)</h4>
+<p>高精細ディスプレイでは、canvasの内部解像度(width属性)を <code>window.devicePixelRatio</code> 倍にし、CSSで表示サイズを指定すると線がくっきりします。この見本の getPos() が「表示サイズ→内部座標」の変換をしているのは、この分離に対応するためです。</p>
+<h4>ここから広がる世界</h4>
+<ul>
+<li><code>ctx.globalCompositeOperation = "destination-out"</code> — 消しゴムが作れる</li>
+<li><code>canvas.toDataURL()</code> — 描いた絵をPNG画像として保存</li>
+<li>描画履歴を配列に積めば「元に戻す」機能に</li>
+<li>毎フレーム描き直す(requestAnimationFrame)とゲームの世界へ</li>
+</ul>`,
 };

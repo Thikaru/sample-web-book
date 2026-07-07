@@ -2604,6 +2604,432 @@ function tick() {
 
 tick();`,
   },
+
+  /* =====================================================
+   * 追加分: JS応用の増強
+   * =================================================== */
+  {
+    id: "js-fetch-api",
+    title: "fetch API — サーバーからデータを取ってくる",
+    category: "JS",
+    level: "応用",
+    date: "2026-07-06",
+    summary: "ボタンを押すたびにきつね画像APIを呼び出す。async/awaitとエラー処理の実戦入門。",
+    description:
+      "fetch() は「URLにリクエストを送って応答をもらう」ためのAPIで、モダンなWebアプリの心臓部です。await fetch(url) で応答を待ち、await res.json() でJSONを取り出す——この2段階のawaitが基本形。通信は失敗がつきものなので、try/catch で包み、res.ok でHTTPエラーも確認します。この見本は実在の公開API(randomfox.ca)を呼ぶので、ネット接続時に本物の通信を体験できます。",
+    points: [
+      "await fetch(url) → await res.json() の2段階",
+      "404などはエラー扱いされない → res.ok の確認が必須",
+      "通信処理は try/catch で必ず失敗に備える",
+    ],
+    html: `<div class="app">
+  <h1>🦊 きつねガチャ</h1>
+  <button id="fetchBtn">写真をもらう!</button>
+  <p id="status">ボタンを押すと、きつね画像APIを呼び出します</p>
+  <img id="foxImg" alt="ランダムなきつねの写真" hidden>
+</div>`,
+    css: `.app {
+  font-family: sans-serif;
+  text-align: center;
+  padding: 24px;
+}
+
+h1 { font-size: 22px; }
+
+button {
+  font-size: 16px;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 999px;
+  background: #ffa94d;
+  color: white;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+}
+
+#status {
+  color: #a294b8;
+  font-size: 13px;
+  min-height: 1.5em;
+}
+
+#foxImg {
+  max-width: 90%;
+  max-height: 260px;
+  border-radius: 16px;
+  border: 4px solid #ffe8d1;
+  box-shadow: 0 10px 24px rgba(150, 110, 60, 0.2);
+}`,
+    js: `const btn = document.querySelector("#fetchBtn");
+const img = document.querySelector("#foxImg");
+const status = document.querySelector("#status");
+
+// async を付けた関数の中でだけ await が使える
+async function loadFox() {
+  btn.disabled = true;
+  status.textContent = "🛰 よびだし中…";
+
+  try {
+    // ① リクエストを送って応答を待つ
+    const res = await fetch("https://randomfox.ca/floof/");
+
+    // ② 404や500はcatchに行かないので自分で確認
+    if (!res.ok) {
+      throw new Error("HTTPエラー: " + res.status);
+    }
+
+    // ③ 応答の本文をJSONとして取り出す(これもawait)
+    const data = await res.json();
+
+    img.src = data.image; // 画像URLが入っている
+    img.hidden = false;
+    status.textContent = "とどいた! 🎉";
+  } catch (err) {
+    // 通信失敗・オフライン・HTTPエラーはここに来る
+    status.textContent = "😢 失敗: " + err.message;
+  }
+
+  btn.disabled = false;
+}
+
+btn.addEventListener("click", loadFox);`,
+  },
+
+  {
+    id: "js-web-animations",
+    title: "Web Animations API — JSからアニメを操縦する",
+    category: "JS",
+    level: "応用",
+    date: "2026-07-06",
+    summary: "element.animate()で作ったアニメを、再生・一時停止・倍速・逆再生で自在に操る。",
+    description:
+      "Web Animations API(WAAPI)は、CSSの@keyframes相当を element.animate(キーフレーム配列, オプション) としてJSから直接作れるAPIです。CSSアニメとの最大の違いは「作った後に操縦できる」こと。返ってくるAnimationオブジェクトの pause() / play() / reverse() や playbackRate で、再生状態を自由にコントロールできます。ユーザー操作に反応するアニメや、値が動的に決まるアニメはWAAPIの出番です。",
+    points: [
+      "element.animate([...], {...}) はCSSの@keyframes+animationのJS版",
+      "戻り値のAnimationで pause / play / reverse / 倍速が操れる",
+      "動的な値・操作に反応するアニメはCSSよりWAAPIが得意",
+    ],
+    html: `<div class="stage">
+  <div class="ufo" id="ufo">🛸</div>
+</div>
+
+<div class="controls">
+  <button id="toggleBtn">⏸ 一時停止</button>
+  <button id="reverseBtn">🔁 逆再生</button>
+  <label>
+    速さ
+    <input type="range" id="speed" min="0.2" max="3" step="0.1" value="1">
+  </label>
+</div>`,
+    css: `body { font-family: sans-serif; }
+
+.stage {
+  height: 140px;
+  margin: 16px;
+  border: 2px dashed #d9c8ff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  overflow: hidden;
+}
+
+.ufo { font-size: 48px; }
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+button {
+  font-size: 14px;
+  padding: 8px 18px;
+  border: 2px solid #9a7bff;
+  border-radius: 999px;
+  background: white;
+  color: #9a7bff;
+  cursor: pointer;
+}
+
+label {
+  font-size: 13px;
+  color: #7c6f96;
+}`,
+    js: `const ufo = document.querySelector("#ufo");
+
+// CSSの@keyframes相当をJSで作る。戻り値が「操縦かん」
+const anim = ufo.animate(
+  [
+    { transform: "translateX(0) rotate(-8deg)" },
+    { transform: "translateX(60vw) rotate(8deg)" },
+  ],
+  {
+    duration: 2000,
+    iterations: Infinity,   // 無限ループ
+    direction: "alternate", // 行って戻る
+    easing: "ease-in-out",
+  }
+);
+
+// 一時停止 / 再開
+const toggleBtn = document.querySelector("#toggleBtn");
+toggleBtn.addEventListener("click", () => {
+  if (anim.playState === "running") {
+    anim.pause();
+    toggleBtn.textContent = "▶ 再生";
+  } else {
+    anim.play();
+    toggleBtn.textContent = "⏸ 一時停止";
+  }
+});
+
+// その場で進行方向を反転
+document.querySelector("#reverseBtn").addEventListener("click", () => {
+  anim.reverse();
+});
+
+// スライダーで倍速(0.2倍〜3倍)
+document.querySelector("#speed").addEventListener("input", (e) => {
+  anim.playbackRate = Number(e.target.value);
+});`,
+  },
+
+  {
+    id: "js-localstorage-memo",
+    title: "localStorage — 消えないメモ帳を作る",
+    category: "JS",
+    level: "応用",
+    date: "2026-07-07",
+    summary: "リロードしても残るメモ帳。JSON.stringify/parseとセットで覚えるブラウザ保存。",
+    description:
+      "localStorage はブラウザに「キーと値」を保存できる小さな倉庫で、リロードしてもブラウザを閉じても残ります。保存できるのは文字列だけなので、配列やオブジェクトは JSON.stringify() で文字列化して保存し、JSON.parse() で復元します。この「状態が変わるたび保存、起動時に復元」というパターンは、このサイトの『学んだ!』記録や遊び場の自動保存でも使われている実戦技です。",
+    points: [
+      "setItem / getItem / removeItem の3つが基本",
+      "文字列しか入らない → JSON.stringify / parse とセットで",
+      "起動時に復元 → 変更のたび保存、が定番パターン",
+    ],
+    html: `<div class="memo-app">
+  <h1>🗒 消えないメモ帳</h1>
+  <p class="hint">追加してからリロードしてみて。ちゃんと残ってるよ!</p>
+  <form id="form">
+    <input id="input" placeholder="メモを書く…" maxlength="30">
+    <button>追加</button>
+  </form>
+  <ul id="list"></ul>
+</div>`,
+    css: `.memo-app {
+  font-family: sans-serif;
+  max-width: 340px;
+  margin: 20px auto;
+}
+
+h1 { font-size: 20px; text-align: center; }
+.hint { font-size: 12px; color: #a294b8; text-align: center; }
+
+form { display: flex; gap: 8px; }
+
+input {
+  flex: 1;
+  font-size: 15px;
+  padding: 10px 14px;
+  border: 2px solid #ffd3e6;
+  border-radius: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  background: #ff7ab6;
+  color: white;
+  padding: 0 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+ul { list-style: none; padding: 0; }
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff0f7;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 8px;
+}
+
+li button {
+  background: transparent;
+  color: #c2447e;
+  font-size: 16px;
+}`,
+    js: `const form = document.querySelector("#form");
+const input = document.querySelector("#input");
+const list = document.querySelector("#list");
+
+const KEY = "memo-app";
+
+// ① 起動時: 保存されていたメモを復元(無ければ空の配列)
+let memos = JSON.parse(localStorage.getItem(KEY)) || [];
+
+// ② 変更のたびに保存して描き直す
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(memos));
+  render();
+}
+
+function render() {
+  list.innerHTML = "";
+  memos.forEach((memo, index) => {
+    const li = document.createElement("li");
+
+    const text = document.createElement("span");
+    text.textContent = memo;
+
+    const del = document.createElement("button");
+    del.textContent = "🗑";
+    del.addEventListener("click", () => {
+      memos.splice(index, 1); // index番目を1つ削除
+      save();
+    });
+
+    li.append(text, del);
+    list.appendChild(li);
+  });
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault(); // ページ再読み込みを止める
+  if (input.value.trim() === "") return;
+  memos.push(input.value.trim());
+  input.value = "";
+  save();
+});
+
+render();`,
+  },
+
+  {
+    id: "js-canvas-draw",
+    title: "Canvasお絵かきアプリ",
+    category: "JS",
+    level: "応用",
+    date: "2026-07-07",
+    summary: "ドット単位で自由に描けるcanvas。ペイントアプリを40行で作る。",
+    description:
+      "canvas はJSから自由に絵を描ける「デジタル画用紙」です。getContext('2d') で描画ペン(コンテキスト)を取得し、beginPath → moveTo → lineTo → stroke の流れで線を引きます。Pointer Eventsと組み合わせれば、マウスでも指でも描けるお絵かきアプリに。ゲーム、グラフ、画像加工など、HTMLのタグでは表現できない自由描画はぜんぶcanvasの領分です。",
+    points: [
+      "getContext(\"2d\") で描画用のペンを手に入れる",
+      "beginPath → moveTo → lineTo → stroke が線描きの基本",
+      "描く座標は getBoundingClientRect() でcanvas基準に変換",
+    ],
+    html: `<div class="paint">
+  <div class="toolbar">
+    <button class="color is-active" data-color="#4a3f5e" style="background:#4a3f5e"></button>
+    <button class="color" data-color="#ff5fa2" style="background:#ff5fa2"></button>
+    <button class="color" data-color="#3ec6b5" style="background:#3ec6b5"></button>
+    <button class="color" data-color="#ffa94d" style="background:#ffa94d"></button>
+    <button id="clearBtn">🧽 ぜんぶ消す</button>
+  </div>
+  <canvas id="canvas" width="460" height="280"></canvas>
+</div>`,
+    css: `.paint {
+  font-family: sans-serif;
+  text-align: center;
+  padding: 12px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.color {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #e8ddd0;
+  cursor: pointer;
+}
+
+.color.is-active {
+  box-shadow: 0 0 0 3px #ff5fa2;
+}
+
+#clearBtn {
+  border: 2px solid #e8ddd0;
+  background: white;
+  border-radius: 999px;
+  padding: 4px 14px;
+  cursor: pointer;
+}
+
+canvas {
+  background: white;
+  border: 3px solid #ffd3e6;
+  border-radius: 16px;
+  touch-action: none; /* 指描きとスクロールの衝突防止 */
+  max-width: 100%;
+}`,
+    js: `const canvas = document.querySelector("#canvas");
+const ctx = canvas.getContext("2d"); // 描画用の「ペン」
+
+ctx.lineWidth = 4;
+ctx.lineCap = "round";  // 線の端を丸く
+ctx.lineJoin = "round"; // 角も丸く
+
+let drawing = false;
+
+// 画面上の座標を「canvasの中の座標」に変換する
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height),
+  };
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  drawing = true;
+  const pos = getPos(e);
+  ctx.beginPath();      // 新しい線を開始
+  ctx.moveTo(pos.x, pos.y);
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  if (!drawing) return;
+  const pos = getPos(e);
+  ctx.lineTo(pos.x, pos.y); // 前回の点から線を引く
+  ctx.stroke();
+});
+
+canvas.addEventListener("pointerup", () => {
+  drawing = false;
+});
+
+// 色の切り替え
+document.querySelectorAll(".color").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelector(".color.is-active").classList.remove("is-active");
+    btn.classList.add("is-active");
+    ctx.strokeStyle = btn.dataset.color;
+  });
+});
+
+// 全消去
+document.querySelector("#clearBtn").addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});`,
+  },
 ];
 
 /* ---------------------------------------------------------
