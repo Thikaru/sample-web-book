@@ -1697,6 +1697,913 @@ card.addEventListener("pointerup", () => {
   card.classList.remove("dragging");
 });`,
   },
+
+  /* =====================================================
+   * 追加分: HTML基礎の増強
+   * =================================================== */
+  {
+    id: "html-images-figure",
+    title: "画像の貼り方 — img・alt・figure",
+    category: "HTML",
+    level: "基礎",
+    date: "2026-06-13",
+    summary: "imgタグの正しい使い方と、altテキストが大切な理由。キャプションはfigureで。",
+    description:
+      "画像は img タグで表示します。src が画像の場所、alt は「画像が見られない人・状況」のための説明文です。alt は読み込み失敗時に表示されるだけでなく、スクリーンリーダーが読み上げ、検索エンジンも参照する超重要属性。キャプション付きの画像は figure と figcaption でセットにすると意味が伝わります。",
+    points: [
+      "alt は「画像の代わりになる説明文」を書く(飾り画像なら空でOK)",
+      "width / height を書くと読み込み中のガタつき(レイアウトシフト)を防げる",
+      "figure + figcaption でキャプション付き画像に",
+    ],
+    html: `<h1>画像の貼り方</h1>
+
+<figure>
+  <img
+    src="https://picsum.photos/id/237/320/200"
+    alt="こちらを見上げる黒い子犬"
+    width="320" height="200">
+  <figcaption>figcaptionで書いたキャプション🐶</figcaption>
+</figure>
+
+<h2>altテキストの働き</h2>
+<p>わざと存在しない画像を指定すると…</p>
+<img src="nai-gazou.png" alt="altに書いた説明文がここに表示されます">`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+h2 { font-size: 16px; margin-top: 24px; }
+
+figure {
+  margin: 0;
+  display: inline-block;
+}
+
+img {
+  border-radius: 12px;
+  border: 3px solid #ffd3e6;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 13px;
+  color: #a294b8;
+  margin-top: 6px;
+}`,
+    js: ``,
+  },
+
+  {
+    id: "html-class-id",
+    title: "classとid — CSSとJSへの橋渡し",
+    category: "HTML",
+    level: "基礎",
+    date: "2026-06-14",
+    summary: "「何度でも使えるclass」と「1つだけのid」。命名がすべての土台になる。",
+    description:
+      "class は要素に「種類の名前」をつける属性で、同じclassを何個でも使えます。id は「固有の名前」で、ページ内に1つだけ。CSSからは .クラス名 / #id名 で選択でき、JSからも querySelector で同じ書き方で取得できます。「見た目のグループ化はclass、唯一の要素の特定はid」と覚えましょう。",
+    points: [
+      "class = 何度でも使える種類名(半角スペース区切りで複数もOK)",
+      "id = ページに1つだけの固有名",
+      "CSSでは .class と #id、JSでも同じセレクタで使える",
+    ],
+    html: `<h1>クラスとidの使い分け</h1>
+
+<!-- 同じ class は何度でも使える -->
+<p class="tag">HTML</p>
+<p class="tag">CSS</p>
+<p class="tag important">JS (2つのclassを併用)</p>
+
+<!-- id はページに1つだけ -->
+<p id="special">idを持つ、唯一の特別な要素</p>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+
+/* .名前 → classを選ぶ */
+.tag {
+  display: inline-block;
+  background: #d9f2ff;
+  color: #2f9dc9;
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-right: 6px;
+}
+
+/* classは重ねがけできる */
+.important {
+  background: #fff3c4;
+  color: #c99a06;
+  font-weight: bold;
+}
+
+/* #名前 → idを選ぶ */
+#special {
+  border: 3px dashed #ff7ab6;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #c2447e;
+}`,
+    js: ``,
+  },
+
+  /* =====================================================
+   * 追加分: CSS基礎の増強
+   * =================================================== */
+  {
+    id: "css-selectors-basic",
+    title: "CSSセレクタ入門大全",
+    category: "CSS",
+    level: "基礎",
+    date: "2026-06-17",
+    summary: "タグ・class・id・子孫・疑似クラス。要素を「狙い撃ち」する基本文法を一気に。",
+    description:
+      "CSSは「どれに(セレクタ)」「何を(プロパティ)」の2つでできています。タグ名そのまま、.class、#id に加えて、「AとBの間にスペース」で子孫選択、:hover や :nth-child() などの疑似クラスまで、セレクタの基本を1画面にまとめました。セレクタを制する者はCSSを制します。",
+    points: [
+      "p / .box / #main — 基本3種をまず完璧に",
+      "A B(スペース)= Aの中のB、A > B = 直接の子だけ",
+      ":nth-child(odd) や :first-child で「何番目」も選べる",
+    ],
+    html: `<div class="list">
+  <p>タグ名セレクタ(p)で全部の段落が茶色</p>
+  <p class="pink">.pink で選ばれた段落</p>
+  <p id="unique">#unique で選ばれた唯一の段落</p>
+</div>
+
+<ul>
+  <li>リスト1(奇数行に色)</li>
+  <li>リスト2</li>
+  <li>リスト3(奇数行に色)</li>
+  <li>リスト4</li>
+</ul>
+
+<p>ホバーで色が変わる → <a href="#">このリンク</a></p>`,
+    css: `body { font-family: sans-serif; padding: 16px; }
+
+/* ① タグ名: すべての p が対象 */
+p { color: #8a6d5c; }
+
+/* ② class: .pink を持つ要素だけ */
+.pink { color: #ff5fa2; font-weight: bold; }
+
+/* ③ id: #unique の1つだけ */
+#unique {
+  background: #f3edff;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+/* ④ 子孫セレクタ: ul の中の li */
+ul li { list-style: "🍬 "; }
+
+/* ⑤ 疑似クラス: 奇数番目のli */
+li:nth-child(odd) { background: #fff0f7; }
+
+/* ⑥ 疑似クラス: マウスが乗った時 */
+a { color: #9a7bff; }
+a:hover { color: #ff5fa2; background: #fff3c4; }`,
+    js: ``,
+  },
+
+  {
+    id: "css-box-model",
+    title: "ボックスモデル — margin・padding・border",
+    category: "CSS",
+    level: "基礎",
+    date: "2026-06-18",
+    summary: "全要素は「箱」でできている。内側の余白と外側の余白、境界線の関係を目で見る。",
+    description:
+      "CSSではすべての要素が「中身 → padding(内側の余白)→ border(枠線)→ margin(外側の余白)」の層でできた箱です。この見本では各層に色をつけて構造を可視化しました。box-sizing: border-box を指定すると「widthはborderまで込みの幅」になり、レイアウト計算が直感的になるため、現代のCSSではほぼ必須の設定です。",
+    points: [
+      "内側から 中身 → padding → border → margin の4層",
+      "margin は透明(親の背景が見える)、padding は自分の背景色が付く",
+      "box-sizing: border-box を全要素に指定するのが現代の定番",
+    ],
+    html: `<div class="outer">
+  <span class="label">← ピンク地帯 = margin(外側の余白)</span>
+  <div class="box">
+    この白い部分が「中身」。
+    そのまわりの黄色が padding、
+    紫の線が border です。
+  </div>
+</div>`,
+    css: `/* 現代の定番おまじない:
+   widthを「border込みの幅」として扱う */
+* { box-sizing: border-box; }
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 16px;
+}
+
+.outer {
+  background: #ffd6ea; /* ここが見える範囲 = margin */
+  border-radius: 12px;
+}
+
+.label {
+  font-size: 12px;
+  color: #c2447e;
+  padding: 6px;
+  display: inline-block;
+}
+
+.box {
+  margin: 28px;             /* 外側の余白 */
+  padding: 24px;            /* 内側の余白 */
+  border: 6px solid #9a7bff; /* 枠線 */
+  background: #fff3c4;      /* paddingに色が付くのが分かる */
+  border-radius: 12px;
+  line-height: 1.8;
+}`,
+    js: ``,
+  },
+
+  {
+    id: "css-position",
+    title: "positionの4兄弟 — relative・absolute・sticky・fixed",
+    category: "CSS",
+    level: "基礎",
+    date: "2026-06-19",
+    summary: "通知バッジもピタッと付いてくる見出しも、全部positionの仕業。",
+    description:
+      "position は要素の配置ルールを変えるプロパティです。relative は「本来の位置から少しずらす+絶対配置の基準になる」、absolute は「基準(直近のrelative等)から座標指定」、sticky は「スクロールで画面端に到達したら貼り付く」、fixed は「画面に完全固定」。特に『親にrelative、子にabsolute』はバッジやアイコン重ねの黄金パターンです。",
+    points: [
+      "親 relative + 子 absolute が重ね配置の黄金パターン",
+      "sticky は「スクロールで端に付いたら貼り付く」",
+      "top / right / bottom / left とセットで使う",
+    ],
+    html: `<h1>通知バッジ(relative + absolute)</h1>
+<div class="bell">
+  🔔
+  <span class="badge">3</span>
+</div>
+
+<h1>貼り付く見出し(sticky)</h1>
+<div class="scroll-area">
+  <h2 class="sticky-head">🍰 スイーツの章</h2>
+  <p>スクロールしても見出しが上に貼り付きます。</p>
+  <p>プリン、ケーキ、シュークリーム…</p>
+  <p>まだまだ続く…</p>
+  <h2 class="sticky-head">🍹 ドリンクの章</h2>
+  <p>次の見出しが来ると入れ替わるのも見どころ。</p>
+  <p>ラムネ、ミルクティー、ソーダ…</p>
+  <p>おしまい!</p>
+</div>`,
+    css: `body { font-family: sans-serif; padding: 16px; }
+h1 { font-size: 16px; color: #7c6f96; }
+
+/* --- バッジ --- */
+.bell {
+  position: relative;  /* ← 子のabsoluteの基準になる */
+  display: inline-block;
+  font-size: 44px;
+}
+.badge {
+  position: absolute;  /* 基準(=bell)からの座標指定 */
+  top: -4px;
+  right: -10px;
+  background: #ff5fa2;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* --- sticky --- */
+.scroll-area {
+  height: 190px;
+  overflow-y: scroll;
+  border: 2px dashed #ffd3e6;
+  border-radius: 12px;
+  padding: 0 14px;
+}
+.sticky-head {
+  position: sticky; /* スクロールで上端に貼り付く */
+  top: 0;
+  background: #fff0f7;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #c2447e;
+}
+p { line-height: 2.2; }`,
+    js: ``,
+  },
+
+  {
+    id: "css-transition-basics",
+    title: "transition徹底入門 — 動きの速度曲線レース",
+    category: "CSS",
+    level: "基礎",
+    date: "2026-06-22",
+    summary: "ease? linear? ease-in-out? 4匹のレースで速度曲線の違いを体感する。",
+    description:
+      "transition は「プロパティが変化するときの時間」を指定します。書式は transition: 対象 時間 速度曲線 遅延。速度曲線(timing-function)はease(緩急あり)、linear(一定)、ease-in(加速)、ease-out(減速)で印象が大きく変わります。この見本ではステージにホバーすると4匹が同時にスタートし、曲線ごとの走り方の違いが一目で分かります。",
+    points: [
+      "transition: 対象 時間 曲線 遅延 の順で指定",
+      "ease-out は「素早く始まりゆっくり終わる」= UIで一番人気",
+      "ホバーを外した時も逆再生でアニメする",
+    ],
+    html: `<p class="hint">🏁 下のステージにマウスを乗せるとレース開始!</p>
+<div class="stage">
+  <div class="runner r1">🐢 linear</div>
+  <div class="runner r2">🐇 ease</div>
+  <div class="runner r3">🐕 ease-in</div>
+  <div class="runner r4">🐈 ease-out</div>
+</div>`,
+    css: `body { font-family: sans-serif; padding: 16px; }
+.hint { color: #a294b8; font-size: 13px; }
+
+.stage {
+  border: 2px dashed #ffd3e6;
+  border-radius: 12px;
+  padding: 14px;
+  background:
+    linear-gradient(90deg, transparent 0 88%, #fff0f7 88%);
+}
+
+.runner {
+  width: 120px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  background: white;
+  border: 2px solid #ffd3e6;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* 同じ2秒でも、速度曲線で走り方が変わる */
+.r1 { transition: transform 2s linear; }
+.r2 { transition: transform 2s ease; }
+.r3 { transition: transform 2s ease-in; }
+.r4 { transition: transform 2s ease-out; }
+
+.stage:hover .runner {
+  transform: translateX(calc(100% + 140px));
+}`,
+    js: ``,
+  },
+
+  /* =====================================================
+   * 追加分: CSSアニメーション
+   * =================================================== */
+  {
+    id: "css-loading-spinner",
+    title: "ローディングアニメ詰め合わせ",
+    category: "CSS",
+    level: "応用",
+    date: "2026-06-29",
+    summary: "くるくるスピナー・ぴょこぴょこドット・波紋。読み込み演出3種盛り。",
+    description:
+      "「読み込み中」の演出は、待ち時間のストレスを和らげる大切なUIです。定番のスピナーは『borderの一辺だけ色を変えた円をrotateで回す』だけ。ドットは同じアニメをanimation-delayでずらし、波紋はscaleとopacityを同時に変化させます。どれも@keyframes+transformの組み合わせで、GPUで処理されるためとても軽量です。",
+    points: [
+      "スピナー = border 1辺だけ着色した円 + rotate",
+      "ドット = 同じ動きを animation-delay でずらすだけ",
+      "transform / opacity のアニメはGPU処理で軽い",
+    ],
+    html: `<div class="row">
+  <div class="demo">
+    <div class="spinner"></div>
+    <p>スピナー</p>
+  </div>
+  <div class="demo">
+    <div class="dots">
+      <span></span><span></span><span></span>
+    </div>
+    <p>ドット</p>
+  </div>
+  <div class="demo">
+    <div class="ripple"></div>
+    <p>波紋</p>
+  </div>
+</div>`,
+    css: `body { font-family: sans-serif; }
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 40px 0;
+}
+.demo { text-align: center; }
+.demo p { color: #a294b8; font-size: 13px; }
+
+/* ① スピナー: 上辺だけ色を変えて回す */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid #ffd3e6;
+  border-top-color: #ff5fa2;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ② ドット: delayをずらして波にする */
+.dots {
+  display: flex;
+  gap: 8px;
+  height: 48px;
+  align-items: center;
+}
+.dots span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #9a7bff;
+  animation: hop 0.6s ease-in-out infinite alternate;
+}
+.dots span:nth-child(2) { animation-delay: 0.15s; }
+.dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes hop {
+  to { transform: translateY(-16px); }
+}
+
+/* ③ 波紋: 広がりながら消える */
+.ripple {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #3ec6b5;
+  animation: ripple 1.2s ease-out infinite;
+}
+@keyframes ripple {
+  from { transform: scale(0.4); opacity: 1; }
+  to   { transform: scale(1.4); opacity: 0; }
+}`,
+    js: ``,
+  },
+
+  {
+    id: "css-text-wave",
+    title: "文字が波打つテキストアニメーション",
+    category: "CSS",
+    level: "応用",
+    date: "2026-06-30",
+    summary: "1文字ずつspanで包んでdelayをずらす、ロゴやタイトルの定番演出。",
+    description:
+      "文字全体ではなく「1文字ずつ」動かすには、各文字を span で包み、同じ@keyframesアニメを animation-delay を少しずつずらして適用します。するとメキシカンウェーブのような波が生まれます。ここではさらに色相も1文字ずつずらして虹色に。文字数が多い場合はJSでspan分割を自動化するのが実務の定番です。",
+    points: [
+      "インライン要素に transform を効かせるには display: inline-block",
+      "nth-child で1文字ごとに animation-delay をずらす",
+      "文字数が多いときはJSでspan分割を自動化する",
+    ],
+    html: `<h1 class="wave">
+  <span>W</span><span>e</span><span>l</span><span>c</span><span>o</span><span>m</span><span>e</span><span>!</span>
+</h1>
+<p class="sub">ようこそ、波打つ文字の世界へ</p>`,
+    css: `body {
+  font-family: sans-serif;
+  text-align: center;
+  padding-top: 60px;
+  background: #fff7ee;
+}
+
+.wave span {
+  /* インライン要素はtransformが効かないので変換 */
+  display: inline-block;
+  font-size: 56px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+
+/* 1文字ずつ遅らせて「波」を作る */
+.wave span:nth-child(1) { animation-delay: 0s;    color: #ff5fa2; }
+.wave span:nth-child(2) { animation-delay: 0.08s; color: #ffa94d; }
+.wave span:nth-child(3) { animation-delay: 0.16s; color: #ffd43b; }
+.wave span:nth-child(4) { animation-delay: 0.24s; color: #3ec6b5; }
+.wave span:nth-child(5) { animation-delay: 0.32s; color: #38bdf8; }
+.wave span:nth-child(6) { animation-delay: 0.4s;  color: #9a7bff; }
+.wave span:nth-child(7) { animation-delay: 0.48s; color: #ff5fa2; }
+.wave span:nth-child(8) { animation-delay: 0.56s; color: #ffa94d; }
+
+@keyframes wave {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-22px) rotate(-6deg); }
+}
+
+.sub { color: #a294b8; }`,
+    js: ``,
+  },
+
+  {
+    id: "css-infinite-marquee",
+    title: "無限ループのロゴマーキー",
+    category: "CSS",
+    level: "応用",
+    date: "2026-07-05",
+    summary: "「導入企業ロゴがす〜っと流れ続ける」あの演出。タネは全体を2セット並べること。",
+    description:
+      "ランディングページの定番、ロゴが延々と流れる無限マーキー。タネは『同じ内容を2セット並べて、ちょうど半分(-50%)まで動かしてループする』こと。1セット目が流れきった瞬間に2セット目が同じ見た目になるので、つなぎ目が見えません。hoverでanimation-play-state: pausedにして一時停止できるのもお約束です。",
+    points: [
+      "中身を2セット並べて translateX(-50%) でループ",
+      "width: max-content で中身の幅ぴったりに",
+      "hover時は animation-play-state: paused で一時停止",
+    ],
+    html: `<p class="hint">🖱 マウスを乗せると一時停止するよ</p>
+<div class="marquee">
+  <div class="track">
+    <!-- 1セット目 -->
+    <span>🍓 いちご社</span><span>🧁 カップケーキ商事</span><span>🍩 ドーナツ堂</span><span>🍰 ショートケーキ屋</span>
+    <!-- 2セット目(まったく同じ内容) -->
+    <span>🍓 いちご社</span><span>🧁 カップケーキ商事</span><span>🍩 ドーナツ堂</span><span>🍰 ショートケーキ屋</span>
+  </div>
+</div>`,
+    css: `body { font-family: sans-serif; }
+.hint { text-align: center; color: #a294b8; font-size: 13px; }
+
+.marquee {
+  overflow: hidden;  /* はみ出しを隠す */
+  border-top: 2px dashed #ffd3e6;
+  border-bottom: 2px dashed #ffd3e6;
+  padding: 18px 0;
+}
+
+.track {
+  display: flex;
+  gap: 32px;
+  width: max-content; /* 中身ぴったりの幅に */
+  animation: scroll 10s linear infinite;
+}
+
+/* ちょうど半分動かすと1セット目と2セット目が重なる */
+@keyframes scroll {
+  to { transform: translateX(-50%); }
+}
+
+.marquee:hover .track {
+  animation-play-state: paused;
+}
+
+.track span {
+  font-size: 20px;
+  font-weight: bold;
+  color: #7c6f96;
+  background: #fff;
+  border: 2px solid #f0e4ff;
+  border-radius: 999px;
+  padding: 8px 22px;
+  white-space: nowrap;
+}`,
+    js: ``,
+  },
+
+  /* =====================================================
+   * 追加分: 最近のWebでよく使われる技術
+   * =================================================== */
+  {
+    id: "css-gradient-text",
+    title: "グラデーション文字 — background-clip: text",
+    category: "CSS",
+    level: "応用",
+    date: "2026-07-01",
+    summary: "このサイトのロゴにも使われている、文字をグラデで塗るテクニック。",
+    description:
+      "文字そのものをグラデーションで塗るには、①背景にグラデーションを敷き、②background-clip: text で「背景を文字の形で切り抜き」、③color: transparent で文字色を透明にします。背景が文字の形にだけ見える、という発想の転換です。background-position をアニメさせれば、キラッと流れる輝きも作れます。実はこのWeb Stack Labのロゴもこの技術です。",
+    points: [
+      "背景グラデ + background-clip: text + 透明文字 の3点セット",
+      "-webkit- 接頭辞も併記すると安心",
+      "background-position を動かすとキラキラ流れる",
+    ],
+    html: `<h1 class="gradient">グラデ文字!</h1>
+<h1 class="shiny">キラッと流れる文字</h1>`,
+    css: `body {
+  font-family: sans-serif;
+  text-align: center;
+  padding-top: 40px;
+}
+
+h1 { font-size: 44px; margin: 20px 0; }
+
+.gradient {
+  background: linear-gradient(120deg, #ff5fa2, #9a7bff, #3ec6b5);
+  -webkit-background-clip: text;
+  background-clip: text;   /* 背景を文字の形で切り抜く */
+  color: transparent;      /* 文字自体は透明に */
+}
+
+.shiny {
+  background: linear-gradient(
+    120deg,
+    #b8a8d8 30%, #fff 50%, #b8a8d8 70%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 2.5s linear infinite;
+}
+
+@keyframes shine {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}`,
+    js: ``,
+  },
+
+  {
+    id: "css-clamp-fluid",
+    title: "clamp()で流体タイポグラフィ",
+    category: "CSS",
+    level: "応用",
+    date: "2026-07-02",
+    summary: "「最小・おすすめ・最大」の3点指定で、画面幅に滑らかに追従する文字サイズ。",
+    description:
+      "clamp(最小値, 推奨値, 最大値) は「推奨値を使うけど、最小〜最大の範囲は出ない」という関数です。推奨値に vw(画面幅の%)やcqi(コンテナ幅の%)を使うと、幅に合わせて文字が滑らかに伸び縮みする『流体タイポグラフィ』になり、メディアクエリの段差ガタつきから解放されます。モダンなサイトの見出しはほぼこれです。枠の右下をつまんで動きを確かめてください。",
+    points: [
+      "clamp(下限, 可変値, 上限) の3点セット",
+      "実ページでは 5vw など画面幅基準が定番",
+      "この見本は cqi(コンテナ幅基準)でその場で体験できる",
+    ],
+    html: `<p class="hint">↘ 枠の右下をドラッグして広げたり縮めたりしてみて!</p>
+
+<div class="resizable">
+  <h1 class="fluid-title">のびちぢみ見出し</h1>
+  <p class="fluid-text">この文字たちは clamp() で「最小〜最大」の間を、枠の幅に合わせてなめらかに変化します。</p>
+</div>`,
+    css: `body { font-family: sans-serif; padding: 16px; }
+.hint { color: #a294b8; font-size: 13px; }
+
+.resizable {
+  container-type: inline-size; /* cqi の基準にする */
+  resize: horizontal;
+  overflow: auto;
+  width: 300px;
+  min-width: 200px;
+  max-width: 100%;
+  border: 2px dashed #9a7bff;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fdf6ff;
+}
+
+/* 最小18px 〜 幅の9% 〜 最大44px */
+.fluid-title {
+  font-size: clamp(18px, 9cqi, 44px);
+  margin: 0 0 8px;
+  color: #8464e8;
+}
+
+/* 本文もゆるやかに追従 */
+.fluid-text {
+  font-size: clamp(12px, 4cqi, 17px);
+  margin: 0;
+  color: #7c6f96;
+  line-height: 1.8;
+}`,
+    js: ``,
+  },
+
+  {
+    id: "css-dark-mode",
+    title: "ダークモード対応 — CSS変数と:has()で作る",
+    category: "CSS",
+    level: "応用",
+    date: "2026-07-03",
+    summary: "色をCSS変数に集約すれば、変数の値を差し替えるだけで一瞬で夜モードに。",
+    description:
+      "ダークモード対応のコツは「色を直書きせず、CSS変数(--名前)に集約する」こと。切り替えは変数の値を差し替えるだけで済みます。この見本ではトグルのcheckboxを :has() で検知して body 全体の変数を上書きしています。実際のサイトではさらに @media (prefers-color-scheme: dark) でOSの設定に合わせる+ユーザー切り替えを組み合わせるのが定番です。",
+    points: [
+      "色は :root の CSS変数に集約 → var(--名前) で使う",
+      "body:has(#toggle:checked) で変数を丸ごと差し替え",
+      "OS設定に従うなら @media (prefers-color-scheme: dark)",
+    ],
+    html: `<label class="switch">
+  <input type="checkbox" id="darkToggle">
+  🌙 ダークモード
+</label>
+
+<div class="card">
+  <h1>こんばんは対応カード</h1>
+  <p>色をぜんぶCSS変数にしておけば、差し替えは一瞬。</p>
+  <button>ボタンも一緒に変わる</button>
+</div>`,
+    css: `/* ① 色はぜんぶ変数に集約(昼の値) */
+body {
+  --bg: #fff7ee;
+  --card: #ffffff;
+  --text: #4a3f5e;
+  --accent: #ff5fa2;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: sans-serif;
+  padding: 20px;
+  min-height: 100vh;
+  margin: 0;
+  transition: background 0.5s, color 0.5s;
+}
+
+/* ② チェックされたら夜の値に差し替え */
+body:has(#darkToggle:checked) {
+  --bg: #1e1b2e;
+  --card: #2a2640;
+  --text: #efeaff;
+  --accent: #b79bff;
+}
+
+/* ③ 部品は変数を参照するだけ */
+.switch {
+  display: inline-block;
+  cursor: pointer;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 8px 18px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  transition: background 0.5s;
+}
+
+h1 { font-size: 20px; margin-top: 0; }
+
+button {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* OSの設定に合わせたい場合はこちらを使う:
+@media (prefers-color-scheme: dark) {
+  body { --bg: #1e1b2e; ... }
+}
+*/`,
+    js: ``,
+  },
+
+  {
+    id: "css-nesting",
+    title: "CSSネスト — Sassみたいに入れ子で書く",
+    category: "CSS",
+    level: "応用",
+    modern: true,
+    date: "2026-07-07",
+    summary: "ツール無しでCSSを入れ子に書ける時代が来た。&で:hoverもまとめられる。",
+    description:
+      "かつてはSassなどのツールが必要だった「セレクタの入れ子(ネスト)」が、素のCSSで書けるようになりました。.card { h2 {...} &:hover {...} } のように、関連するスタイルを親の中にまとめられるので、構造が一目瞭然になります。& は「親セレクタ自身」を表します。CSSネストは2023年末までに全主要ブラウザへ載り、2024年には要素セレクタを&なしで直接書ける緩和構文も揃いました。",
+    points: [
+      "親 { 子セレクタ {...} } と入れ子で書ける",
+      "& は親自身 → &:hover で擬似クラスもまとめられる",
+      "ネストは2〜3段まで。深くしすぎると逆に読みにくい",
+    ],
+    html: `<div class="card">
+  <h2>ネストで書いたカード</h2>
+  <p>このカードのCSSは、ぜんぶ .card の中に入れ子で書かれています。CSSタブを見てみて!</p>
+  <a href="#">ホバーしてみてね →</a>
+</div>`,
+    css: `body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+  background: #fff7ee;
+}
+
+/* .card に関するスタイルが1か所にまとまる! */
+.card {
+  width: 300px;
+  background: white;
+  border: 2px solid #ffd3e6;
+  border-radius: 16px;
+  padding: 24px;
+  transition: transform 0.25s, box-shadow 0.25s;
+
+  /* 子要素をネストで書く */
+  h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: #c2447e;
+  }
+
+  p {
+    color: #8a7f9e;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  a {
+    color: #9a7bff;
+    font-weight: bold;
+    text-decoration: none;
+
+    /* さらにネスト: & は「親自身」 */
+    &:hover {
+      color: #ff5fa2;
+    }
+  }
+
+  /* カード自身のhoverも中に書ける */
+  &:hover {
+    transform: translateY(-6px) rotate(-1deg);
+    box-shadow: 0 14px 30px rgba(255, 122, 182, 0.25);
+  }
+}`,
+    js: ``,
+  },
+
+  {
+    id: "js-typewriter",
+    title: "タイプライター演出 — 1文字ずつ現れる",
+    category: "JS",
+    level: "応用",
+    date: "2026-07-04",
+    summary: "ヒーローコピーが打ち込まれていくあの演出。slice()とsetIntervalで作る。",
+    description:
+      "AIチャットやランディングページの定番、文字が1文字ずつ打ち込まれる演出です。仕組みは「文字数カウンタを増やしながら text.slice(0, i) を表示し続ける」だけ。点滅カーソルはCSSアニメーションで作ります。複数の文章を順番に打っては消す無限ループにすると、ヒーローセクションの主役になれます。",
+    points: [
+      "text.slice(0, i) で「先頭からi文字だけ」取り出す",
+      "カーソルの点滅はCSSの@keyframesに任せる",
+      "打ち終わったら少し待って次の文へ、が心地よい",
+    ],
+    html: `<div class="stage">
+  <p class="type">
+    <span id="text"></span><span class="cursor"></span>
+  </p>
+</div>`,
+    css: `.stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background: #2d2450;
+  font-family: monospace;
+}
+
+.type {
+  font-size: 22px;
+  color: #f4f0ff;
+}
+
+/* 点滅カーソルはCSSにおまかせ */
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1.2em;
+  background: #ff5fa2;
+  vertical-align: text-bottom;
+  animation: blink 0.8s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}`,
+    js: `const textEl = document.querySelector("#text");
+
+// 順番に表示する文章たち
+const lines = [
+  "こんにちは、Web Stack Labへようこそ。",
+  "コードは、書いて動かして覚えよう。",
+  "今日もひとつ、新しい技を。",
+];
+
+let lineIndex = 0; // 何文目か
+let charIndex = 0; // 何文字目か
+let deleting = false;
+
+function tick() {
+  const line = lines[lineIndex];
+
+  if (!deleting) {
+    charIndex++;
+    // 打ち終わったら1秒待って消しはじめる
+    if (charIndex === line.length) {
+      deleting = true;
+      setTimeout(tick, 1000);
+      textEl.textContent = line;
+      return;
+    }
+  } else {
+    charIndex--;
+    // 消し終わったら次の文へ
+    if (charIndex === 0) {
+      deleting = false;
+      lineIndex = (lineIndex + 1) % lines.length;
+    }
+  }
+
+  // 先頭から charIndex 文字だけ表示
+  textEl.textContent = line.slice(0, charIndex);
+  setTimeout(tick, deleting ? 40 : 90);
+}
+
+tick();`,
+  },
 ];
 
 /* ---------------------------------------------------------

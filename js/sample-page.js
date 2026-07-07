@@ -37,6 +37,19 @@ function renderSamplePage(sample) {
   const pointsEl = document.getElementById("samplePoints");
   pointsEl.innerHTML = sample.points.map((p) => `<li>${p}</li>`).join("");
 
+  /* もっとくわしい解説(details.js にある見本だけ表示) */
+  const detailEl = document.getElementById("sampleDetail");
+  const detail =
+    typeof SAMPLE_DETAILS !== "undefined" ? SAMPLE_DETAILS[sample.id] : null;
+  if (detailEl && detail) {
+    detailEl.innerHTML = `
+      <details class="deep-dive">
+        <summary>📖 もっとくわしい解説(クリックでひらく)</summary>
+        <div class="deep-dive-body">${detail}</div>
+      </details>
+    `;
+  }
+
   /* 学んだ!ボタン */
   const learnedBtn = document.getElementById("learnedBtn");
   function paintLearnedBtn(isLearned) {

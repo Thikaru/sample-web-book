@@ -497,6 +497,73 @@ a {
   left: 0;
 }
 
+/* もっとくわしい解説アコーディオン */
+.deep-dive {
+  background: #fff;
+  border: 2px solid #e5d9ff;
+  border-radius: 16px;
+  margin: 0 0 28px;
+  overflow: hidden;
+}
+
+.deep-dive summary {
+  cursor: pointer;
+  padding: 14px 22px;
+  font-weight: 800;
+  color: #8464e8;
+  background: #f6f1ff;
+  transition: background 0.2s;
+  list-style-position: outside;
+}
+
+.deep-dive summary:hover {
+  background: #eee4ff;
+}
+
+.deep-dive[open] summary {
+  border-bottom: 2px dashed #e5d9ff;
+}
+
+.deep-dive-body {
+  padding: 4px 26px 20px;
+  font-size: 14.5px;
+  line-height: 1.9;
+}
+
+.deep-dive-body h4 {
+  margin: 20px 0 6px;
+  font-size: 15px;
+  color: #c2447e;
+}
+
+.deep-dive-body h4::before {
+  content: "🍭 ";
+}
+
+.deep-dive-body p {
+  margin: 0 0 10px;
+  color: #5d5375;
+}
+
+.deep-dive-body ul {
+  margin: 0 0 10px;
+  padding-left: 22px;
+  color: #5d5375;
+}
+
+.deep-dive-body li {
+  margin-bottom: 4px;
+}
+
+.deep-dive-body code {
+  background: #f3edff;
+  color: #8464e8;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+}
+
 .learned-btn {
   font-family: var(--font);
   font-size: 14px;
