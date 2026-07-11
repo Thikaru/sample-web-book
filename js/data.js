@@ -3030,6 +3030,94 @@ document.querySelector("#clearBtn").addEventListener("click", () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 });`,
   },
+
+  /* =====================================================
+   * 追加分: HTML応用の増強
+   * =================================================== */
+  {
+    id: "html-inert-attribute",
+    title: "inert属性 — 背後をまるごと操作不能にする",
+    category: "HTML",
+    level: "応用",
+    modern: true,
+    date: "2026-07-12",
+    summary: "パネルを開いている間、背後のコンテンツを inert 属性で丸ごと無効化。クリックもTab移動も読み上げも届かなくなる。",
+    description:
+      "inert は要素とその子孫を「画面には見えているが操作はできない」状態にするHTMLのグローバル属性です。inert を付けた範囲の中身はクリックしてもイベントが発火せず、Tabキーでのフォーカス移動の対象からも外れ、スクリーンリーダーからも読み上げられなくなります。従来はモーダルやパネルを開いたときに、背景側の要素へ個別に tabindex=\"-1\" を設定したり pointer-events: none を当てたりして擬似的に操作を止めていましたが、inert 属性(JSからは要素の .inert プロパティ)を使えば1行で同じことが実現できます。2023年4月に主要ブラウザでBaseline入りしており、現在は広く利用できる機能です。ただし見た目上の変化(グレーアウトなど)は自動では付かないため、[inert] セレクタなどで意図的にスタイルを当てる必要があります。",
+    points: [
+      "inert を true にすると、要素内の全てがクリック・Tabフォーカス・読み上げの対象外になる",
+      "モーダルやパネル表示時に背景を「操作不能」にする定番テクニックが1行で書ける(tabindex操作やpointer-events: noneの個別指定が不要)",
+      "見た目は自動で変わらないので、[inert] セレクタで opacity など任意のスタイルを当てる",
+    ],
+    html: `<div class="demo-wrap">
+  <div id="mainContent" class="panel">
+    <h3>メインコンテンツ</h3>
+    <p>ボタンやリンクが並ぶ、ふだんの画面を想定したエリアです。</p>
+    <button type="button">押せるボタン</button>
+    <a href="#" onclick="return false;">押せるリンク</a>
+  </div>
+
+  <button id="openBtn" type="button">⚙ 設定パネルを開く</button>
+
+  <div id="settingsPanel" class="settings-panel" hidden>
+    <h3>設定パネル</h3>
+    <p>このパネルが開いている間、背後の「メインコンテンツ」は inert 属性でクリックもTab移動も無効化されます。</p>
+    <label><input type="checkbox" /> 通知を受け取る</label>
+    <br /><br />
+    <button id="closeBtn" type="button">閉じる</button>
+  </div>
+</div>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+.demo-wrap {
+  max-width: 360px;
+}
+.panel {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  transition: opacity 0.2s ease;
+}
+/* inertが付いた要素を見た目にも分かるようにする(自動では変化しない) */
+.panel[inert] {
+  opacity: 0.35;
+  filter: grayscale(0.4);
+}
+#openBtn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: #6366f1;
+  color: white;
+  cursor: pointer;
+}
+.settings-panel {
+  margin-top: 12px;
+  border: 2px solid #6366f1;
+  border-radius: 8px;
+  padding: 16px;
+  background: #eef2ff;
+}`,
+    js: `const mainContent = document.getElementById("mainContent");
+const settingsPanel = document.getElementById("settingsPanel");
+const openBtn = document.getElementById("openBtn");
+const closeBtn = document.getElementById("closeBtn");
+
+openBtn.addEventListener("click", () => {
+  settingsPanel.hidden = false;
+  mainContent.inert = true; // 背後の操作をまるごと無効化
+  closeBtn.focus();
+});
+
+closeBtn.addEventListener("click", () => {
+  settingsPanel.hidden = true;
+  mainContent.inert = false; // 操作を元に戻す
+  openBtn.focus();
+});`,
+  },
 ];
 
 /* ---------------------------------------------------------
