@@ -3118,6 +3118,452 @@ closeBtn.addEventListener("click", () => {
   openBtn.focus();
 });`,
   },
+
+  /* =====================================================
+   * 追加分: HTML基礎の増強
+   * =================================================== */
+  {
+    id: "html-responsive-images",
+    title: "レスポンシブ画像 — srcset と picture要素",
+    category: "HTML",
+    level: "基礎",
+    date: "2026-07-13",
+    summary: "画面の幅や解像度に合わせて、ブラウザが最適な画像を自動で選んでくれる仕組み。",
+    description:
+      "img タグに src を1つ書くだけだと、スマホでもPCの巨大モニタでも同じサイズの画像が読み込まれてしまい、小さい画面では通信量の無駄になります。srcset 属性に「画像URLと横幅(例: 800w)」の候補を並べ、sizes 属性で「表示幅の目安」を伝えると、ブラウザが画面サイズや解像度に応じて最適な1枚を自動で選んで読み込みます。もう一つの手段が picture タグです。中に複数の source を並べ、media 属性で条件(画面幅など)ごとに違う画像URLを指定できます。srcset が「同じ構図で解像度違いを選ぶ」ためのものなのに対し、picture + source は「画面幅によって構図そのものを変える(アートディレクション)」場合に向いています。どちらの方法でも、最後に通常の img タグを書いておくと、条件に合う source が無い古いブラウザ向けのフォールバックになります。srcset・sizes・picture はいずれも主要ブラウザで長く使われている安定した機能です。",
+    points: [
+      "srcset + sizes:同じ構図のまま解像度違いの画像からブラウザが最適な1枚を選ぶ(パフォーマンス向上)",
+      "picture + source:media 属性の条件ごとに構図が違う画像へ丸ごと切り替える(アートディレクション)",
+      "picture の中の img タグは省略できない。source が1つも条件に合わないときのフォールバックになる",
+    ],
+    html: `<h1>レスポンシブ画像</h1>
+
+<h2>① srcset + sizes(解像度に応じて自動選択)</h2>
+<img
+  src="https://picsum.photos/id/1015/400/300"
+  srcset="
+    https://picsum.photos/id/1015/400/300 400w,
+    https://picsum.photos/id/1015/800/600 800w,
+    https://picsum.photos/id/1015/1200/900 1200w"
+  sizes="(max-width: 600px) 100vw, 400px"
+  alt="山と湖の風景写真"
+  width="400" height="300">
+
+<h2>② picture + source(画面幅で構図ごと切り替え)</h2>
+<picture>
+  <source media="(max-width: 480px)" srcset="https://picsum.photos/id/1025/300/400">
+  <source media="(min-width: 481px)" srcset="https://picsum.photos/id/1025/600/300">
+  <img src="https://picsum.photos/id/1025/600/300" alt="犬の写真(画面幅によって構図が変わります)">
+</picture>
+
+<p class="hint">プレビュー枠の横幅を変えて、画像が選び直されるか確認してみよう</p>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+h2 { font-size: 15px; margin-top: 24px; }
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 3px solid #cfe0ff;
+  display: block;
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6b7a99;
+}`,
+    js: ``,
+  },
+
+  /* =====================================================
+   * 追加分: JS基礎の増強
+   * =================================================== */
+  {
+    id: "js-array-methods",
+    title: "配列メソッドで一覧を操作する — map / filter / reduce",
+    category: "JS",
+    level: "基礎",
+    date: "2026-07-14",
+    summary:
+      "配列のmap・filter・reduceを使って、買い物リストの未購入分と合計金額をリアルタイムに計算する見本。",
+    description:
+      "JavaScriptの配列には、要素をひとつずつ処理するための便利なメソッドが用意されています。map() は配列の各要素を変換して同じ長さの新しい配列を作り、filter() は条件に合う要素だけを取り出した新しい配列を作り、reduce() は配列全体をひとつの値(合計や個数など)にまとめます。いずれも元の配列そのものは書き換えずに新しい値を返す点が共通しており、for文でカウンタ変数を管理しながら書くよりも「配列に対して何をしたいか」がコードから読み取りやすくなります。map・filter・reduceはES5(2009年)から存在する古くからの標準機能で、モダンブラウザはもちろん非常に広い範囲の環境で問題なく使えます。この見本では、買い物リストのチェック状態から filter で未購入分だけを絞り込み、reduce でその合計金額を計算し、map で一覧表示用のHTML文字列を組み立てています。",
+    points: [
+      "map():配列の各要素を変換し、同じ長さの新しい配列を作る(例: 一覧のHTML生成)",
+      "filter():条件に合う要素だけを取り出した新しい配列を作る(例: 未購入だけ絞り込む)",
+      "reduce():配列全体をひとつの値にまとめる(例: 合計金額の計算)",
+    ],
+    html: `<h1>買い物リスト</h1>
+<p class="lead">チェックを入れると「未購入」から外れます。合計金額も自動で再計算されます。</p>
+<ul id="list"></ul>
+<div id="summary" class="summary"></div>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+.lead { font-size: 13px; color: #6b7a99; }
+
+#list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+#list li {
+  border-bottom: 1px solid #e2e8f5;
+  padding: 8px 0;
+}
+#list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+#list .done {
+  text-decoration: line-through;
+  color: #9aa5c0;
+}
+.price {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.summary {
+  background: #eef3ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+.summary strong {
+  color: #2451ff;
+}`,
+    js: `const products = [
+  { name: "りんご", price: 120, checked: false },
+  { name: "牛乳", price: 200, checked: false },
+  { name: "食パン", price: 150, checked: false },
+  { name: "卵(6個入り)", price: 248, checked: false },
+  { name: "コーヒー豆", price: 680, checked: false },
+];
+
+const listEl = document.getElementById("list");
+const summaryEl = document.getElementById("summary");
+
+function render() {
+  listEl.innerHTML = products
+    .map((item, i) => \`
+    <li>
+      <label>
+        <input type="checkbox" data-index="\${i}" \${item.checked ? "checked" : ""}>
+        <span class="\${item.checked ? "done" : ""}">\${item.name}</span>
+        <span class="price">¥\${item.price}</span>
+      </label>
+    </li>\`)
+    .join("");
+
+  const remaining = products.filter((item) => !item.checked);
+  const total = remaining.reduce((sum, item) => sum + item.price, 0);
+  const names = remaining.map((item) => item.name);
+
+  summaryEl.innerHTML = \`
+    <p>未購入: \${remaining.length}点(\${names.length ? names.join("、") : "なし"})</p>
+    <p>残りの合計金額: <strong>¥\${total.toLocaleString()}</strong></p>
+  \`;
+}
+
+listEl.addEventListener("change", (e) => {
+  const idx = e.target.dataset.index;
+  if (idx === undefined) return;
+  products[Number(idx)].checked = e.target.checked;
+  render();
+});
+
+render();`,
+  },
+
+  /* =====================================================
+   * 追加分: JS基礎の増強
+   * =================================================== */
+  {
+    id: "js-form-validation",
+    title: "フォーム入力チェック — Constraint Validation API",
+    category: "JS",
+    level: "基礎",
+    date: "2026-07-15",
+    summary:
+      "required・pattern などのHTML属性と、JavaScriptのvalidityプロパティを組み合わせて、送信前に入力ミスをその場で伝える見本。",
+    description:
+      "フォームの入力チェックは、HTML属性だけである程度まで実現できます。required は「未入力なら送信させない」、pattern は「正規表現に合わない値を弾く」、type=\"email\" は「メール形式かどうか」をブラウザ自身が判定してくれます。これらの検証結果は、各input要素の validity プロパティ(ValidityStateオブジェクト)から読み取れます。valueMissing は未入力、patternMismatch は正規表現不一致、typeMismatch は型不一致など、どこが問題なのかを個別に判定できるため、「必須項目です」「〇〇の形式で入力してください」のように項目ごとに違うメッセージを出し分けられます。さらに setCustomValidity() を使うと、ブラウザ標準では判定できない独自ルール(例: パスワード確認欄の一致チェック)もこの仕組みに乗せて、統一的にエラー表示できます。input要素のrequired・pattern属性やValidityStateは長く使われてきた安定した標準機能で、主要ブラウザで広くサポートされています。",
+    points: [
+      "required・pattern・type=\"email\" などの属性でブラウザ自身に基本チェックをさせる",
+      "input.validity(ValidityState)で valueMissing・patternMismatch・typeMismatch を個別に判定",
+      "setCustomValidity() で独自ルール(パスワード確認の一致など)もエラー表示に統合できる",
+    ],
+    html: `<form id="signupForm" novalidate>
+  <h1>会員登録フォーム</h1>
+
+  <label>
+    お名前(必須)
+    <input type="text" id="name" name="name" required minlength="2">
+    <small class="msg" data-for="name"></small>
+  </label>
+
+  <label>
+    メールアドレス(必須)
+    <input type="email" id="email" name="email" required>
+    <small class="msg" data-for="email"></small>
+  </label>
+
+  <label>
+    パスワード(8文字以上・英数字混在)
+    <input type="password" id="password" name="password" required
+      pattern="(?=.*[a-zA-Z])(?=.*[0-9]).{8,}">
+    <small class="msg" data-for="password"></small>
+  </label>
+
+  <label>
+    パスワード(確認)
+    <input type="password" id="passwordConfirm" name="passwordConfirm" required>
+    <small class="msg" data-for="passwordConfirm"></small>
+  </label>
+
+  <button type="submit">登録する</button>
+  <p id="result" class="result"></p>
+</form>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 18px; margin-bottom: 16px; }
+
+label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #445;
+}
+
+input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 4px;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 2px solid #cfd6e6;
+  border-radius: 8px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2451ff;
+}
+
+input.is-invalid {
+  border-color: #ff5470;
+  background: #fff3f5;
+}
+
+.msg {
+  display: block;
+  min-height: 16px;
+  margin-top: 4px;
+  color: #ff5470;
+  font-size: 12px;
+}
+
+button {
+  font-size: 14px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  background: #2451ff;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #1739c9; }
+
+.result {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.result.ok { color: #16a34a; }`,
+    js: `const form = document.getElementById("signupForm");
+const password = document.getElementById("password");
+const passwordConfirm = document.getElementById("passwordConfirm");
+const resultEl = document.getElementById("result");
+
+// 項目ごとのエラーメッセージ(validityの種類に応じて出し分け)
+function messageFor(input) {
+  const v = input.validity;
+  if (v.valueMissing) return "この項目は必須です。";
+  if (input.id === "email" && v.typeMismatch) return "メール形式で入力してください(例: name@example.com)。";
+  if (input.id === "password" && v.patternMismatch) return "8文字以上、英字と数字を両方含めてください。";
+  if (input.id === "name" && v.tooShort) return "2文字以上で入力してください。";
+  if (v.customError) return input.validationMessage;
+  return "";
+}
+
+function validateField(input) {
+  // パスワード確認欄は「一致しているか」を独自ルールとしてsetCustomValidityに乗せる
+  if (input === passwordConfirm) {
+    input.setCustomValidity(
+      passwordConfirm.value !== password.value ? "パスワードが一致しません。" : ""
+    );
+  }
+
+  const ok = input.checkValidity();
+  input.classList.toggle("is-invalid", !ok);
+  const msgEl = form.querySelector(\`.msg[data-for="\${input.id}"]\`);
+  if (msgEl) msgEl.textContent = ok ? "" : messageFor(input);
+  return ok;
+}
+
+form.querySelectorAll("input").forEach((input) => {
+  input.addEventListener("input", () => validateField(input));
+});
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const inputs = [...form.querySelectorAll("input")];
+  const allOk = inputs.map(validateField).every(Boolean);
+
+  resultEl.textContent = allOk
+    ? "✅ 入力内容はすべて有効です(実際の送信は行われません)"
+    : "❌ 入力内容を確認してください";
+  resultEl.className = "result" + (allOk ? " ok" : "");
+});`,
+  },
+
+  /* =====================================================
+   * 追加分: HTML応用の増強
+   * =================================================== */
+  {
+    id: "html-template-element",
+    title: "templateタグ — 使うまで描画されない雛形",
+    category: "HTML",
+    level: "応用",
+    date: "2026-07-16",
+    summary: "テンプレートをHTMLの中に書いておき、JSで複製して使い回す。文字列結合よりも安全で速い一覧の作り方。",
+    description:
+      "innerHTML にテンプレート文字列を連結して一覧を作る方法はよく使われますが、ユーザー入力をそのまま埋め込むとXSS(スクリプト注入)の危険があり、要素数が増えるほど文字列の組み立てコストもかさみます。template タグを使うと、この問題を避けつつ同じことができます。template タグの中身はページ読み込み時にDOMへ描画されず、img の読み込みや script の実行も行われない「不活性な雛形」として保持されます。JavaScriptから template要素の .content プロパティ(DocumentFragment)を .cloneNode(true) で複製し、複製した中の要素だけを textContent で書き換えてから appendChild すれば、文字列を一切組み立てずに安全に要素を増やせます。同じ雛形を何度でも複製できるため、一覧やカードを繰り返し追加するUIと相性が良い機能です。template要素はHTML Standardの一部として長く全主要ブラウザでサポートされている安定した機能です。",
+    points: [
+      "template タグの中身は読み込み時に描画されない(img・scriptも動かない「不活性」な雛形)",
+      "tpl.content.cloneNode(true) で複製すると、雛形そのものは汚さずに何度でも使い回せる",
+      "textContent での書き換え + cloneNode は innerHTML の文字列連結よりXSSに強く、一覧生成にも向く",
+    ],
+    html: `<h1>名刺リスト</h1>
+<p class="lead">ボタンを押すたびに、templateタグの雛形を複製してカードを1枚追加します。</p>
+
+<button id="addBtn" type="button">名刺を1枚追加</button>
+<ul id="list" class="list"></ul>
+
+<!-- ここは読み込み時には描画されない「雛形」。id や画像も今は動かない -->
+<template id="cardTemplate">
+  <li class="card">
+    <div class="avatar"></div>
+    <div class="info">
+      <p class="name"></p>
+      <p class="role"></p>
+    </div>
+    <button class="removeBtn" type="button">削除</button>
+  </li>
+</template>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+.lead { font-size: 13px; color: #6b7a99; margin-bottom: 12px; }
+
+#addBtn {
+  font-size: 14px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2451ff;
+  color: white;
+  cursor: pointer;
+}
+#addBtn:hover { background: #1739c9; }
+
+.list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 2px solid #dbe3f5;
+  border-radius: 10px;
+  background: #f8faff;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7aa2ff, #2451ff);
+  flex-shrink: 0;
+}
+
+.info { flex: 1; }
+.name { font-size: 14px; font-weight: bold; margin: 0; }
+.role { font-size: 12px; color: #6b7a99; margin: 2px 0 0; }
+
+.removeBtn {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid #ff5470;
+  border-radius: 6px;
+  background: white;
+  color: #ff5470;
+  cursor: pointer;
+}
+.removeBtn:hover { background: #fff0f2; }`,
+    js: `const addBtn = document.getElementById("addBtn");
+const list = document.getElementById("list");
+const template = document.getElementById("cardTemplate");
+
+// 名刺のサンプルデータ(追加のたびに順番に使う)
+const people = [
+  { name: "佐藤 あかり", role: "フロントエンドエンジニア" },
+  { name: "鈴木 はると", role: "デザイナー" },
+  { name: "高橋 ゆい", role: "バックエンドエンジニア" },
+  { name: "田中 そら", role: "プロジェクトマネージャー" },
+];
+let count = 0;
+
+addBtn.addEventListener("click", () => {
+  const person = people[count % people.length];
+  count++;
+
+  // template.content(DocumentFragment)を複製。雛形そのものは変化しない
+  const clone = template.content.cloneNode(true);
+
+  // 複製の中の要素だけをtextContentで書き換える(innerHTMLの文字列連結を使わない)
+  clone.querySelector(".name").textContent = person.name;
+  clone.querySelector(".role").textContent = person.role;
+
+  const li = clone.querySelector(".card");
+  clone.querySelector(".removeBtn").addEventListener("click", () => {
+    li.remove();
+  });
+
+  list.appendChild(clone);
+});`,
+  },
 ];
 
 /* ---------------------------------------------------------
