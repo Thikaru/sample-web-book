@@ -3564,6 +3564,235 @@ addBtn.addEventListener("click", () => {
   list.appendChild(clone);
 });`,
   },
+
+  /* =====================================================
+   * 追加分: JS基礎の増強
+   * =================================================== */
+  {
+    id: "js-string-methods",
+    title: "文字列メソッド見本帳 — trim・includes・replace・padStart",
+    category: "JS",
+    level: "基礎",
+    date: "2026-07-19",
+    summary:
+      "入力欄の文字にtrim・toUpperCase・includes・replace・padStartを次々に試して、コードと結果をその場で見比べる見本。",
+    description:
+      "JavaScriptの文字列(string)には、値を書き換えずに新しい文字列を作るためのメソッドがたくさん用意されています。trim() は前後の空白を取り除き、toUpperCase() は大文字に変換し、includes() は指定した文字列が含まれるかを true/false で返し、replace() は最初に見つかった一致箇所を別の文字列に置き換えます。padStart() は文字列が指定した長さに満たないとき、先頭を指定した文字で埋めて長さをそろえるメソッドで、0埋めした番号表示などによく使われます。ここで挙げた中では includes()(ECMAScript 2015)と padStart()(ECMAScript 2017)が比較的新しく追加されたメソッドで、trim()・toUpperCase()・replace() はそれよりも前から存在する古株です。いずれの メソッドも呼び出し元の文字列そのものを変更せず、結果を新しい文字列として返す点が共通しています。この見本では、入力欄の値に対してボタンを押すたびに1つのメソッドを適用し、実際に呼び出したコードと結果を並べて表示することで、それぞれの挙動の違いを確認できるようにしています。",
+    points: [
+      "文字列メソッドは元の文字列を書き換えず、結果を新しい文字列として返す(イミュータブル)",
+      "trim() は前後の空白除去、includes() は部分一致の判定、replace() は最初の一致箇所の置換に使う",
+      "padStart(長さ, 埋め文字) は桁を揃えたい表示(例: 0埋めの番号)に便利",
+    ],
+    html: `<h1>文字列メソッド見本帳</h1>
+<p class="lead">入力欄の文字を書き換えて、下のボタンでいろいろな文字列メソッドを試してみよう。</p>
+
+<input type="text" id="textInput" value="  Web Stack Lab  ">
+
+<div class="buttons">
+  <button data-method="trim" type="button">trim()</button>
+  <button data-method="upper" type="button">toUpperCase()</button>
+  <button data-method="includes" type="button">includes("Lab")</button>
+  <button data-method="replace" type="button">replace("Lab", "ラボ")</button>
+  <button data-method="padStart" type="button">padStart(20, "*")</button>
+</div>
+
+<div id="output" class="output">ボタンを押すと、ここに実行したコードと結果が表示されます。</div>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+.lead { font-size: 13px; color: #6b7a99; margin-bottom: 12px; }
+
+#textInput {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.buttons button {
+  font-size: 13px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #2451ff;
+  color: white;
+  cursor: pointer;
+}
+.buttons button:hover { background: #1739c9; }
+
+.output {
+  background: #eef3ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-all;
+}
+.output code {
+  background: #dbe3f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}`,
+    js: `const input = document.getElementById("textInput");
+const output = document.getElementById("output");
+
+document.querySelectorAll("[data-method]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const text = input.value;
+    let code = "";
+    let result;
+
+    switch (btn.dataset.method) {
+      case "trim":
+        code = '"' + text + '".trim()';
+        result = text.trim();
+        break;
+      case "upper":
+        code = '"' + text + '".toUpperCase()';
+        result = text.toUpperCase();
+        break;
+      case "includes":
+        code = '"' + text + '".includes("Lab")';
+        result = text.includes("Lab");
+        break;
+      case "replace":
+        code = '"' + text + '".replace("Lab", "ラボ")';
+        result = text.replace("Lab", "ラボ");
+        break;
+      case "padStart":
+        code = '"' + text + '".padStart(20, "*")';
+        result = text.padStart(20, "*");
+        break;
+      default:
+        return;
+    }
+
+    output.innerHTML =
+      "<code>" + code + "</code><br>→ <strong>" + JSON.stringify(result) + "</strong>";
+  });
+});`,
+  },
+
+  /* =====================================================
+   * 追加分: HTML基礎の増強
+   * =================================================== */
+  {
+    id: "html-datalist-autocomplete",
+    title: "datalist要素 — 入力欄に候補リストを添える",
+    category: "HTML",
+    level: "基礎",
+    date: "2026-07-20",
+    summary:
+      "input に list属性で datalist をひも付けると、JavaScriptなしで「候補から選べる」入力欄になる。",
+    description:
+      "datalist は、input 要素に「入力候補のリスト」を渡すための要素です。datalist に id を振り、input 側に同じ値を list 属性として指定すると、入力欄にフォーカスしたときや文字を打ち込んだときに、ブラウザが候補一覧を出してくれます。select と違って自由入力も残したまま候補を出せるのが特徴で、県名や検索キーワードのように「候補はあるけど一覧に無い値も許したい」場面に向いています。text型の input では Chrome・Firefox・Edge・Safariのいずれでも長らく利用でき、フォームの一部として広く使われてきた機能です。一方で、range型・color型・date型など特殊なinput typeと組み合わせたときの見た目や挙動はブラウザによって差があるため、それらと組み合わせる場合は各ブラウザでの動作確認が必要です。この見本では、都道府県名のdatalistをtext型inputにひも付け、さらに「候補を追加」ボタンでJavaScriptからoption要素を動的に増やせることも確認できるようにしています。",
+    points: [
+      "input の list属性と datalist の id を対応させると、候補付きの自由入力欄になる(selectと違い一覧に無い値も入力できる)",
+      "text型inputでの候補表示は主要ブラウザで長く安定して動くが、range・color・date型などは対応がブラウザごとに異なる",
+      "datalist内のoption要素はJavaScriptから自由に追加・削除でき、候補リストを動的に更新できる",
+    ],
+    html: `<h1>datalist見本 — 候補から選べる入力欄</h1>
+<p class="lead">「県」の欄に文字を打つと候補が出るよ。一覧に無い県名を自由入力することもできる。</p>
+
+<label for="pref">お住まいの都道府県</label><br>
+<input type="text" id="pref" list="prefList" placeholder="例: 東京都">
+
+<datalist id="prefList">
+  <option value="北海道"></option>
+  <option value="東京都"></option>
+  <option value="大阪府"></option>
+  <option value="京都府"></option>
+  <option value="沖縄県"></option>
+</datalist>
+
+<div class="add-row">
+  <input type="text" id="newPref" placeholder="候補に追加したい県名">
+  <button type="button" id="addBtn">候補を追加</button>
+</div>
+
+<p id="msg" class="msg"></p>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+.lead { font-size: 13px; color: #6b7a99; margin-bottom: 14px; }
+
+label { font-size: 13px; font-weight: bold; }
+
+input[type="text"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.add-row input { flex: 1; }
+.add-row button {
+  font-size: 13px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #2451ff;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.add-row button:hover { background: #1739c9; }
+
+.msg {
+  font-size: 13px;
+  color: #1a8f4c;
+  min-height: 1.4em;
+  margin-top: 8px;
+}`,
+    js: `const prefList = document.getElementById("prefList");
+const newPref = document.getElementById("newPref");
+const addBtn = document.getElementById("addBtn");
+const msg = document.getElementById("msg");
+
+addBtn.addEventListener("click", () => {
+  const value = newPref.value.trim();
+  if (!value) {
+    msg.textContent = "県名を入力してください";
+    return;
+  }
+
+  const already = [...prefList.options].some((opt) => opt.value === value);
+  if (already) {
+    msg.textContent = \`「\${value}」はすでに候補にあります\`;
+    return;
+  }
+
+  const option = document.createElement("option");
+  option.value = value;
+  prefList.appendChild(option);
+
+  msg.textContent = \`「\${value}」を候補に追加しました\`;
+  newPref.value = "";
+});`,
+  },
 ];
 
 /* ---------------------------------------------------------
