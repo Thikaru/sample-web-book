@@ -3793,6 +3793,187 @@ addBtn.addEventListener("click", () => {
   newPref.value = "";
 });`,
   },
+
+  {
+    id: "html-search-landmark",
+    title: "search要素 — 検索フォームに専用の意味を与える",
+    category: "HTML",
+    level: "応用",
+    modern: true,
+    date: "2026-07-21",
+    summary:
+      "検索・絞り込みフォームを<search>で囲むだけで、暗黙のランドマーク(role=\"search\")になる。",
+    description:
+      "search は2023年にHTML仕様へ追加された、比較的新しい「意味づけ」専用の要素です。中に入れたフォームが「検索のための領域」であることをブラウザやスクリーンリーダーに伝える、暗黙の role=\"search\" を持つランドマークとして働きます。header・main・nav と同じ仲間ですが、見た目には一切影響しないので、追加してもレイアウトが壊れる心配はありません。Chrome・Edge・Firefoxは2023年10月リリースのバージョンから、Safariは17.0から対応しており、2026年現在では主要ブラウザで問題なく使えるBaseline機能になっています。main がページに1つしか置けないのに対し、search はサイト内検索・商品の絞り込みなど、同じページの複数箇所に置いてよいのも特徴です。",
+    points: [
+      "search は「検索の入り口」であることを伝えるランドマーク要素(暗黙の role=\"search\")",
+      "main は1ページに1つだけだが、search はサイト内検索・絞り込みなど複数置いてよい",
+      "見た目はdivと同じで何も変わらない。中の動作(絞り込みJSなど)は自分で実装する必要がある",
+    ],
+    html: `<h1>🍓 フルーツショップ</h1>
+
+<search aria-label="サイト内検索">
+  <form onsubmit="return false">
+    <label for="siteSearch">サイト内を検索</label><br>
+    <input type="search" id="siteSearch" placeholder="例: 送料について">
+  </form>
+</search>
+
+<search aria-label="商品をしぼりこむ">
+  <label for="filterInput">商品名でしぼりこむ</label><br>
+  <input type="search" id="filterInput" placeholder="くだものの名前を入力">
+</search>
+
+<ul id="fruitList">
+  <li>🍓 いちご</li>
+  <li>🍊 みかん</li>
+  <li>🍇 ぶどう</li>
+  <li>🍑 もも</li>
+  <li>🍍 パイナップル</li>
+  <li>🍌 バナナ</li>
+</ul>
+
+<p class="hint">👆 下の「商品名でしぼりこむ」に入力すると一覧がリアルタイムで絞り込まれるよ(上の検索欄はダミー)</p>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h1 { font-size: 20px; }
+
+/* search要素は素のdivと見た目が同じなので、箱としてスタイルする */
+search {
+  display: block;
+  background: #fff7ee;
+  border: 1px solid #ffe1b3;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #b5762f;
+}
+
+input[type="search"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 8px 10px;
+  margin-top: 4px;
+  border: 1px solid #ffd08a;
+  border-radius: 8px;
+}
+
+#fruitList {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+#fruitList li {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0e6d6;
+}
+#fruitList li.hidden {
+  display: none;
+}
+
+.hint {
+  font-size: 12px;
+  color: #a08f6f;
+}`,
+    js: `const filterInput = document.getElementById("filterInput");
+const items = document.querySelectorAll("#fruitList li");
+
+filterInput.addEventListener("input", () => {
+  const keyword = filterInput.value.trim();
+
+  items.forEach((li) => {
+    const matches = keyword === "" || li.textContent.includes(keyword);
+    li.classList.toggle("hidden", !matches);
+  });
+});`,
+  },
+
+  {
+    id: "html-progress-meter",
+    title: "progressとmeter — 「進み具合」と「量」を専用タグで見せる",
+    category: "HTML",
+    level: "基礎",
+    date: "2026-07-23",
+    summary:
+      "作業の進み具合はprogress、決まった範囲内の量はmeter。div+CSSで自作しなくてもブラウザ標準のバーが使える。",
+    description:
+      "progress と meter は見た目が似ているためよく混同されますが、意味はまったく違います。progress は「これから終わる作業がどこまで進んだか」を表す要素で、value を省略すると値が定まらない状態(不確定)を示す、くるくる動くアニメーションになります。ダウンロードやアップロード、ファイル処理の途中経過にぴったりです。一方 meter は「決まった範囲の中の、今の量」を表す要素で、ディスクの使用量や電池残量、得点のように、そもそも0%から始まって100%で完了するような『進行』ではない数値に使います。meter には low・high・optimum という属性があり、値がどの範囲にあるかによって対応ブラウザではバーの色が自動で変わる仕組みも持っています。どちらもdivと違ってブラウザが意味を理解できるため、スクリーンリーダーが読み上げに使ったり、開発者ツールが値を認識したりできます。",
+    points: [
+      "progress は「作業の進み具合」。value を省略すると不確定(くるくる)状態になる",
+      "meter は「決まった範囲内の今の量」。0%から進んでいく作業には使わない",
+      "meter の low・high・optimum で「その値が良いか悪いか」を示せる(対応ブラウザでは色が変わる)",
+    ],
+    html: `<h2>📥 ダウンロードの進み具合</h2>
+<progress id="dlProgress" value="0" max="100"></progress>
+<p id="dlLabel">0%</p>
+<button id="dlBtn">10%すすめる</button>
+<button id="dlIndeterminate">不確定状態にする</button>
+
+<h2>🔋 ストレージの使用量</h2>
+<meter id="storageMeter" min="0" max="100" value="55" low="60" high="85" optimum="0"></meter>
+<p>55GB / 100GB使用中(空きが少なくなるほどバーの色が変わるよ)</p>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+h2 {
+  font-size: 16px;
+  margin: 20px 0 8px;
+}
+progress,
+meter {
+  width: 100%;
+  max-width: 320px;
+  height: 18px;
+}
+#dlLabel {
+  font-size: 13px;
+  color: #555;
+  margin: 6px 0;
+}
+button {
+  padding: 6px 14px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 999px;
+  background: #4a7dfc;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+button:disabled {
+  background: #b7c6f2;
+  cursor: default;
+}`,
+    js: `const dlProgress = document.getElementById("dlProgress");
+const dlLabel = document.getElementById("dlLabel");
+const dlBtn = document.getElementById("dlBtn");
+const dlIndeterminate = document.getElementById("dlIndeterminate");
+
+// ボタンを押すたびに10ずつ進める(maxが100なので最大10回で完了)
+dlBtn.addEventListener("click", () => {
+  const next = Math.min(dlProgress.value + 10, 100);
+  dlProgress.value = next;
+  dlLabel.textContent = next + "%" + (next === 100 ? "(完了!)" : "");
+  if (next === 100) dlBtn.disabled = true;
+});
+
+// value属性を外すと「不確定」状態になり、くるくるアニメーションに変わる
+dlIndeterminate.addEventListener("click", () => {
+  dlProgress.removeAttribute("value");
+  dlLabel.textContent = "進み具合が不明な処理中…";
+  dlBtn.disabled = true;
+});`,
+  },
 ];
 
 /* ---------------------------------------------------------
