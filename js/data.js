@@ -3974,6 +3974,88 @@ dlIndeterminate.addEventListener("click", () => {
   dlBtn.disabled = true;
 });`,
   },
+
+  {
+    id: "css-aspect-ratio",
+    title: "aspect-ratio — 縦横比を固定してガタつきをなくす",
+    category: "CSS",
+    level: "基礎",
+    date: "2026-07-24",
+    summary:
+      "widthとheightを個別に計算しなくても、aspect-ratioひとつで「縦横比」を指定できる。画像・動画枠のガタつき(レイアウトシフト)防止に定番。",
+    description:
+      "aspect-ratio は要素の「幅に対する高さの比率」を直接指定できるCSSプロパティです。以前は padding-top のパーセント指定(いわゆる paddingハック)で無理やり縦横比を固定していましたが、aspect-ratio: 16 / 9 のように書くだけで同じことができます。特に効果的なのが img や video、iframe の埋め込み枠です。画像が読み込まれる前は本来サイズが分からずレイアウトが後からガクッとズレがちですが、あらかじめ aspect-ratio を指定しておけば読み込み前から場所を確保でき、ガタつき(レイアウトシフト)を防げます。width: 100% と組み合わせて「横幅は親に合わせつつ、高さは比率で自動計算」という使い方が定番で、object-fit: cover と併用すると比率固定の枠に画像をきれいに収められます。2021年9月までに主要ブラウザで実装が完了しており、Baseline Widely Availableな機能です。",
+    points: [
+      "aspect-ratio: 16 / 9 のように「幅 / 高さ」の比率で指定する",
+      "widthだけ決めればheightは比率から自動計算されるので、レイアウトシフト防止になる",
+      "img・videoにはobject-fit: coverを組み合わせると、はみ出た部分をきれいにトリミングできる",
+    ],
+    html: `<h2>🖼 aspect-ratioで縦横比を固定</h2>
+<div class="gallery">
+  <div class="box ratio-16-9">
+    <img src="https://picsum.photos/seed/a/400/400" alt="サンプル画像1" />
+    <span class="label">16 / 9</span>
+  </div>
+  <div class="box ratio-1-1">
+    <img src="https://picsum.photos/seed/b/400/400" alt="サンプル画像2" />
+    <span class="label">1 / 1</span>
+  </div>
+  <div class="box ratio-4-3">
+    <img src="https://picsum.photos/seed/c/400/400" alt="サンプル画像3" />
+    <span class="label">4 / 3</span>
+  </div>
+</div>
+<p class="hint">元画像はすべて正方形(400×400)。box側のaspect-ratioが違うだけで枠の形が変わり、object-fit: coverで自動トリミングされる。</p>`,
+    css: `body {
+  font-family: sans-serif;
+  padding: 16px;
+}
+.gallery {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.box {
+  position: relative;
+  width: 160px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #eee;
+}
+/* ここがポイント: widthだけ決めて、heightはaspect-ratioに任せる */
+.ratio-16-9 {
+  aspect-ratio: 16 / 9;
+}
+.ratio-1-1 {
+  aspect-ratio: 1 / 1;
+}
+.ratio-4-3 {
+  aspect-ratio: 4 / 3;
+}
+.box img {
+  width: 100%;
+  height: 100%;
+  /* 枠の比率に合わせてはみ出た部分をトリミング */
+  object-fit: cover;
+  display: block;
+}
+.label {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: white;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 4px;
+}
+.hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #777;
+}`,
+    js: ``,
+  },
 ];
 
 /* ---------------------------------------------------------
